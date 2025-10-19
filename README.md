@@ -233,7 +233,7 @@ Each team member picks one of the statements in the FiveThirtyEight
 and fact checks it based on the data. Use dplyr functionality whenever
 possible.
 
-# 1️⃣ Deesha’s Analysi
+# 1️⃣ Deesha’s Analysis
 
 # Statement: “Most Avengers die at least once.”
 

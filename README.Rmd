@@ -4,19 +4,17 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit the README.Rmd file -->
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Lab report #3 - instructions
 
-Follow the instructions posted at https://ds202-at-isu.github.io/labs.html for the lab assignment. The work is meant to be finished during the lab time, but you have time until Monday evening to polish things.
+Follow the instructions posted at <https://ds202-at-isu.github.io/labs.html> for the lab assignment. The work is meant to be finished during the lab time, but you have time until Monday evening to polish things.
 
-Include your answers in this document (Rmd file). Make sure that it knits properly (into the md file). Upload both the Rmd and the md file to your repository.  
+Include your answers in this document (Rmd file). Make sure that it knits properly (into the md file). Upload both the Rmd and the md file to your repository.
 
-All submissions to the github repo will be automatically uploaded for grading once the due date is passed.
-Submit a link to your repository on Canvas (only one submission per team) to signal to the instructors that you are done with your submission.
+All submissions to the github repo will be automatically uploaded for grading once the due date is passed. Submit a link to your repository on Canvas (only one submission per team) to signal to the instructors that you are done with your submission.
 
 # Lab 3: Avenger's Peril
 
@@ -34,12 +32,11 @@ av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/av
 head(av)
 ```
 
-Get the data into a format where the five columns for Death[1-5] are replaced by two columns: Time, and Death. Time should be a number between 1 and 5 (look into the function `parse_number`); Death is a categorical variables with values "yes", "no" and "". Call the resulting data set `deaths`. 
+Get the data into a format where the five columns for Death[1-5] are replaced by two columns: Time, and Death. Time should be a number between 1 and 5 (look into the function `parse_number`); Death is a categorical variables with values "yes", "no" and "". Call the resulting data set `deaths`.
 
 Similarly, deal with the returns of characters.
 
-Based on these datasets calculate the average number of deaths an Avenger suffers. 
-(readr)
+Based on these datasets calculate the average number of deaths an Avenger suffers. (readr)
 
 ```{r}
 
@@ -80,14 +77,14 @@ avg_deaths <- mean(deaths_summary$total_deaths)
 cat("Average number of deaths per Avenger:", avg_deaths, "\n")
 ```
 
-
 ## Individually
 
-For each team member, copy this part of the report. 
+For each team member, copy this part of the report.
 
 Each team member picks one of the statements in the FiveThirtyEight [analysis](https://fivethirtyeight.com/features/avengers-death-comics-age-of-ultron/) and fact checks it based on the data. Use dplyr functionality whenever possible.
 
 # 1️⃣ Deesha's Analysis
+
 # Statement: "Most Avengers die at least once."
 
 ```{r}
@@ -107,21 +104,20 @@ if (prop_with_death > 0.5) {
 }
 ```
 
-
 ### FiveThirtyEight Statement
 
 > Quote the statement you are planning to fact-check.
 
-### Deesha's quote 
+### Deesha's quote
+
 “Most Avengers die at least once.”
-
-
 
 ### Include the code
 
 Make sure to include the code to derive the (numeric) fact for the statement
 
-### Deesha's code 
+### Deesha's code
+
 ```{r}
 num_heroes <- nrow(deaths_summary)
 num_with_death <- sum(deaths_summary$total_deaths >= 1)
@@ -132,13 +128,30 @@ num_with_death
 prop_with_death
 ```
 
-
 ### Include your answer
 
 Include at least one sentence discussing the result of your fact-checking endeavor.
 
 ### Deesha's answer
-There are r num_heroes Avengers in the dataset, and r num_with_death of them have died at least once.
-That means about r round(prop_with_death * 100, 1) % of all Avengers have experienced death.
+
+There are r num_heroes Avengers in the dataset, and r num_with_death of them have died at least once. That means about r round(prop_with_death \* 100, 1) % of all Avengers have experienced death.
 
 Upload your changes to the repository. Discuss and refine answers as a team.
+
+# Logans Anaylsis
+
+### Statement:
+
+“I counted 89 total deaths — some unlucky Avengers are basically Meat Loaf with an E-ZPass.”
+
+### Logans Code
+
+```{r}
+total_deaths <- sum(deaths$Death == "YES", na.rm = TRUE)
+total_deaths
+
+```
+
+### Logans Conclusion
+
+There are in fact 89 recorded deaths across all Avengers in the dataset after checking. FiveThirtyEight did say 89 so he was correct after our calcuations.

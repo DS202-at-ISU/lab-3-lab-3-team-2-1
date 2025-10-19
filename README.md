@@ -30,7 +30,7 @@ library(tidyverse)
 
     ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-    ## ✔ forcats   1.0.1     ✔ stringr   1.5.1
+    ## ✔ forcats   1.0.1     ✔ stringr   1.5.2
     ## ✔ ggplot2   4.0.0     ✔ tibble    3.3.0
     ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
     ## ✔ purrr     1.1.0     
@@ -326,3 +326,25 @@ them have died at least once. That means about r round(prop_with_death
 
 Upload your changes to the repository. Discuss and refine answers as a
 team.
+
+# Logans Anaylsis
+
+### Statement:
+
+“I counted 89 total deaths — some unlucky Avengers are basically Meat
+Loaf with an E-ZPass.”
+
+### Logans Code
+
+``` r
+total_deaths <- sum(deaths$Death == "YES", na.rm = TRUE)
+total_deaths
+```
+
+    ## [1] 89
+
+### Logans Conclusion
+
+There are in fact 89 recorded deaths across all Avengers in the dataset
+after checking. FiveThirtyEight did say 89 so he was correct after our
+calcuations.

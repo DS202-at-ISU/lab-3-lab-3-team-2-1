@@ -235,11 +235,169 @@ possible.
 
 # Maya’s Analysis
 
-### Statement:
+### FiveThirtyEight Statement I’m Using: “Of the nine Avengers we see on screen — Iron Man, Hulk, Captain America, Thor, Hawkeye, Black Widow, Scarlet Witch, Quicksilver and The Vision — every single one of them has died at least once in the comics. In fact, Hawkeye died twice!”
 
-### My Code (Maya)
+### My Code (Maya):
+
+``` r
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(tibble)
+library(purrr)
+
+#Identify columns
+death_cols <- names(av)[str_detect(names(av), regex("^death\\d+$", ignore_case = TRUE))]
+stopifnot(length(death_cols) > 0)
+
+
+is_death_yes <- function(x) {
+  y <- tolower(str_trim(as.character(x)))
+  case_when(
+    is.na(y) ~ FALSE,
+    y %in% c("yes","y","true","1") ~ TRUE,
+    str_detect(y, "deceas") ~ TRUE,   # "deceased"
+    TRUE ~ FALSE
+  )
+}
+
+#long deaths table straight from `av`
+deaths_long <- av %>%
+  select(Name.Alias, all_of(death_cols)) %>%
+  pivot_longer(all_of(death_cols), names_to = "Time", values_to = "DeathRaw") %>%
+  mutate(DeathYes = is_death_yes(DeathRaw))
+
+#count deaths per alias row
+deaths_by_alias <- deaths_long %>%
+  group_by(Name.Alias) %>%
+  summarise(total_deaths = sum(DeathYes, na.rm = TRUE), .groups = "drop") %>%
+  mutate(alias_lc = tolower(Name.Alias))
+
+#MCU hero, include codename + common civilian names 
+#(using multiple simple "contains" terms per hero)
+mcu_terms <- tribble(
+  ~hero,             ~terms,
+  "Iron Man",        c("iron man","tony stark","anthony stark"),
+  "Hulk",            c("hulk","bruce banner","robert bruce banner"),
+  "Captain America", c("captain america","steve rogers","steven rogers"),
+  "Thor",            c("thor"),
+  "Hawkeye",         c("hawkeye","clint barton"),
+  "Black Widow",     c("black widow","natasha romanoff","natalia romanova"),
+  "Scarlet Witch",   c("scarlet witch","wanda maximoff"),
+  "Quicksilver",     c("quicksilver","pietro maximoff"),
+  "Vision",          c("vision","the vision","victor shade")
+)
+
+# helper
+contains_any <- function(text_vec, term_vec) {
+  txt <- tolower(text_vec)
+  map_lgl(txt, ~ any(str_detect(.x, fixed(term_vec, ignore_case = TRUE))))
+}
+
+#see which aliases matched for transparency
+matched_aliases <- mcu_terms %>%
+  mutate(
+    aliases = map(terms, ~ deaths_by_alias %>%
+                    filter(contains_any(alias_lc, .x)) %>%
+                    arrange(alias_lc) %>%
+                    pull(Name.Alias))
+  )
+
+# print matches
+print(matched_aliases %>% select(hero, aliases))
+```
+
+    ## # A tibble: 9 × 2
+    ##   hero            aliases  
+    ##   <chr>           <list>   
+    ## 1 Iron Man        <chr [0]>
+    ## 2 Hulk            <chr [1]>
+    ## 3 Captain America <chr [1]>
+    ## 4 Thor            <chr [1]>
+    ## 5 Hawkeye         <chr [0]>
+    ## 6 Black Widow     <chr [0]>
+    ## 7 Scarlet Witch   <chr [1]>
+    ## 8 Quicksilver     <chr [1]>
+    ## 9 Vision          <chr [1]>
+
+``` r
+#sum deaths for each hero across ALL matching alias rows
+hero_deaths <- mcu_terms %>%
+  mutate(
+    total_deaths = map_dbl(terms, ~ deaths_by_alias %>%
+                             filter(contains_any(alias_lc, .x)) %>%
+                             summarise(n = sum(total_deaths, na.rm = TRUE)) %>%
+                             pull(n) %>% { if(length(.)==0) 0 else . })
+  ) %>%
+  mutate(died_at_least_once = total_deaths >= 1)
+
+
+all_nine_died  <- all(hero_deaths$died_at_least_once)
+hawkeye_deaths <- hero_deaths %>% filter(hero == "Hawkeye") %>% pull(total_deaths)
+
+print(hero_deaths %>% select(hero, total_deaths, died_at_least_once))
+```
+
+    ## # A tibble: 9 × 3
+    ##   hero            total_deaths died_at_least_once
+    ##   <chr>                  <dbl> <lgl>             
+    ## 1 Iron Man                   0 FALSE             
+    ## 2 Hulk                       1 TRUE              
+    ## 3 Captain America            1 TRUE              
+    ## 4 Thor                       2 TRUE              
+    ## 5 Hawkeye                    0 FALSE             
+    ## 6 Black Widow                0 FALSE             
+    ## 7 Scarlet Witch              1 TRUE              
+    ## 8 Quicksilver                1 TRUE              
+    ## 9 Vision                     1 TRUE
+
+``` r
+cat("\n----- Summary (Maya) -----\n")
+```
+
+    ## 
+    ## ----- Summary (Maya) -----
+
+``` r
+cat("All nine MCU Avengers died at least once? ", all_nine_died, "\n", sep = "")
+```
+
+    ## All nine MCU Avengers died at least once? FALSE
+
+``` r
+cat("Hawkeye total recorded deaths: ", hawkeye_deaths, "\n", sep = "")
+```
+
+    ## Hawkeye total recorded deaths: 0
+
+``` r
+died_heroes <- hero_deaths %>% filter(died_at_least_once) %>% pull(hero)
+not_died    <- hero_deaths %>% filter(!died_at_least_once) %>% pull(hero)
+
+cat("Died at least once:", paste(died_heroes, collapse = ", "), "\n")
+```
+
+    ## Died at least once: Hulk, Captain America, Thor, Scarlet Witch, Quicksilver, Vision
+
+``` r
+cat("No recorded deaths:", paste(not_died, collapse = ", "), "\n")
+```
+
+    ## No recorded deaths: Iron Man, Hawkeye, Black Widow
 
 ### My Conclusion (Maya)
+
+After checking the data from the Avengers dataset, I found that the
+statement isn’t fully supported. Out of the nine MCU Avengers listed,
+only six — Hulk, Captain America, Thor, Scarlet Witch, Quicksilver, and
+Vision — have at least one recorded death. Iron Man, Hawkeye, and Black
+Widow don’t have any deaths shown in this dataset. The claim that
+“Hawkeye died twice” also isn’t supported since the data records zero
+deaths for him. This difference is likely because the dataset doesn’t
+include every comic storyline or might list characters by their civilian
+names, which can make it harder to match. Overall, while the article
+says all nine have died at least once, the dataset we used doesn’t fully
+back that up.
 
 # Deesha’s Analysis
 

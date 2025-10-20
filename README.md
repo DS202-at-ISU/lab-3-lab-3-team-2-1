@@ -30,7 +30,7 @@ library(tidyverse)
 
     ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ## ✔ dplyr     1.1.4     ✔ readr     2.1.5
-    ## ✔ forcats   1.0.1     ✔ stringr   1.5.1
+    ## ✔ forcats   1.0.0     ✔ stringr   1.5.2
     ## ✔ ggplot2   4.0.0     ✔ tibble    3.3.0
     ## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
     ## ✔ purrr     1.1.0     
@@ -494,5 +494,57 @@ There are in fact 89 recorded deaths across all Avengers in the dataset
 after checking. FiveThirtyEight did say 89 so he was correct after our
 calcuations.
 
-Upload your changes to the repository. Discuss and refine answers as a
-team.
+# Som’s Analysis
+
+### FiveThirtyEight Statement
+
+“On average, an Avenger dies about once.”
+
+### What I checked (method)
+
+Use the long `deaths` table to count deaths per character, then take the
+mean across Avengers. Compare to ~1.
+
+``` r
+# If for any reason deaths_summary isn't in the environment, rebuild it safely
+if (!exists("deaths_summary")) {
+  deaths_summary <- deaths %>%
+    dplyr::group_by(Name.Alias) %>%
+    dplyr::summarize(total_deaths = sum(Death == "YES", na.rm = TRUE), .groups = "drop")
+}
+
+som_avg_deaths <- mean(deaths_summary$total_deaths, na.rm = TRUE)
+som_n          <- nrow(deaths_summary)
+
+cat("Avengers counted:", som_n, "\n")
+```
+
+    ## Avengers counted: 163
+
+``` r
+cat("Average deaths per Avenger:", round(som_avg_deaths, 3), "\n")
+```
+
+    ## Average deaths per Avenger: 0.546
+
+``` r
+# Simple verdict relative to ~1 death on average
+tol <- 0.15  # tolerance band; adjust if your instructor prefers a different band
+if (abs(som_avg_deaths - 1) <= tol) {
+  cat("Conclusion: Supported (≈ 1 death on average within tolerance).\n")
+} else {
+  cat("Conclusion: Not supported (mean not close to 1 within tolerance).\n")
+}
+```
+
+    ## Conclusion: Not supported (mean not close to 1 within tolerance).
+
+### Som’s Conclusion
+
+Using the long-form deaths table, the average deaths per Avenger is **r
+round(som_avg_deaths, 3)** across **r som_n** Avengers. This does
+**not** support the claim that “on average, an Avenger dies about once,”
+given our estimate is well below 1. This mean is consistent with our
+teammate’s count of total deaths: r round(som_avg_deaths, 3) × r som_n ≈
+**r round(som_avg_deaths \* som_n)** total deaths, matching Logan’s
+**89**.

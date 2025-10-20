@@ -401,54 +401,16 @@ back that up.
 
 # 1️⃣ Deesha’s Analysis
 
-# Statement: “Most Avengers die at least once.”
+# Statement
 
-``` r
-num_heroes <- nrow(deaths_summary)
-num_with_death <- sum(deaths_summary$total_deaths >= 1)
-prop_with_death <- num_with_death / num_heroes
-
-cat("\n----- Deesha -----\n")
-```
-
-    ## 
-    ## ----- Deesha -----
-
-``` r
-cat("Number of Avengers:", num_heroes, "\n")
-```
-
-    ## Number of Avengers: 163
-
-``` r
-cat("Avengers who died at least once:", num_with_death, "\n")
-```
-
-    ## Avengers who died at least once: 64
-
-``` r
-cat("Proportion who died:", round(prop_with_death, 3), "\n")
-```
-
-    ## Proportion who died: 0.393
-
-``` r
-if (prop_with_death > 0.5) {
-  cat("Conclusion: Supported — most Avengers die at least once.\n")
-} else {
-  cat("Conclusion: Not supported — less than half die at least once.\n")
-}
-```
-
-    ## Conclusion: Not supported — less than half die at least once.
+Most Avengers die at least once”
 
 ### FiveThirtyEight Statement
 
 > Quote the statement you are planning to fact-check.
 
-### Deesha’s quote
-
-“Most Avengers die at least once.”
+Out of 173 listed Avengers, my analysis found that 69 had died at least
+one time after they joined the team.x
 
 ### Include the code
 
@@ -461,23 +423,38 @@ statement
 num_heroes <- nrow(deaths_summary)
 num_with_death <- sum(deaths_summary$total_deaths >= 1)
 prop_with_death <- num_with_death / num_heroes
-
-num_heroes
+cat("----- Deesha's Fact Check -----\n")
 ```
 
-    ## [1] 163
+    ## ----- Deesha's Fact Check -----
 
 ``` r
-num_with_death
+cat("Total Avengers:", num_heroes, "\n")
 ```
 
-    ## [1] 64
+    ## Total Avengers: 163
 
 ``` r
-prop_with_death
+cat("Avengers who died at least once:", num_with_death, "\n")
 ```
 
-    ## [1] 0.392638
+    ## Avengers who died at least once: 64
+
+``` r
+cat("Proportion who died:", round(prop_with_death * 100, 1), "%\n")
+```
+
+    ## Proportion who died: 39.3 %
+
+``` r
+if (prop_with_death > 0.5) {
+cat("Conclusion: Supported — most Avengers die at least once.\n")
+} else {
+cat("Conclusion: Not supported — less than half die at least once.\n")
+}
+```
+
+    ## Conclusion: Not supported — less than half die at least once.
 
 ### Include your answer
 
@@ -486,12 +463,12 @@ fact-checking endeavor.
 
 ### Deesha’s answer
 
-There are r num_heroes Avengers in the dataset, and r num_with_death of
-them have died at least once. That means about r round(prop_with_death
-\* 100, 1) % of all Avengers have experienced death.
-
-Upload your changes to the repository. Discuss and refine answers as a
-team.
+Based on the data, out of 163 Avengers in the dataset, 64 have died at
+least once.  
+That’s roughly 39.3% of all Avengers.  
+Therefore, the FiveThirtyEight statement *“Most Avengers die at least
+once”* is **not supported** by the dataset — fewer than half of all
+Avengers have experienced death.
 
 # Logans Anaylsis
 
@@ -514,3 +491,6 @@ total_deaths
 There are in fact 89 recorded deaths across all Avengers in the dataset
 after checking. FiveThirtyEight did say 89 so he was correct after our
 calcuations.
+
+Upload your changes to the repository. Discuss and refine answers as a
+team.

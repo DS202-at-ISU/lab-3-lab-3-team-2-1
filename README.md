@@ -422,12 +422,41 @@ statement
 ``` r
 num_heroes <- nrow(deaths_summary)
 num_with_death <- sum(deaths_summary$total_deaths >= 1)
+
 prop_with_death <- num_with_death / num_heroes
 
-num_heroes
+cat("----- Deesha's Fact Check -----\n")
 ```
 
-    ## [1] 163
+    ## ----- Deesha's Fact Check -----
+
+``` r
+cat("Total Avengers:", num_heroes, "\n")
+```
+
+    ## Total Avengers: 163
+
+``` r
+cat("Avengers who died at least once:", num_with_death, "\n")
+```
+
+    ## Avengers who died at least once: 64
+
+``` r
+cat("Proportion who died:", round(prop_with_death * 100, 1), "%\n")
+```
+
+    ## Proportion who died: 39.3 %
+
+``` r
+if (prop_with_death > 0.5) {
+  cat("Conclusion: Supported — most Avengers die at least once.\n")
+} else {
+  cat("Conclusion: Not supported — less than half die at least once.\n")
+}
+```
+
+    ## Conclusion: Not supported — less than half die at least once.
 
 ### Include your answer
 
